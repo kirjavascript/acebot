@@ -11,5 +11,8 @@ inputs.split('\n').forEach(line => {
     }
 });
 
-console.log(JSON.stringify(bytes));
+console.log(JSON.stringify(bytes.slice(0,240)));
+console.log(JSON.stringify(bytes.slice(240,499)));
+console.log(JSON.stringify(bytes.slice(499, 700)));
+console.log(JSON.stringify(bytes.slice(700)));
 console.log(bytes.length);
