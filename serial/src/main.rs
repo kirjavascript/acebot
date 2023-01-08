@@ -3,7 +3,6 @@ use std::{thread, time};
 use std::io::{Read, Write};
 
 fn main() {
-    let port = SerialPort::open("/dev/ttyACM0", 115200).expect("no connection");
 
     let movie = include_str!("../../Input Log.txt");
     let lines = movie.split('\n').collect::<Vec<&str>>();
@@ -19,21 +18,27 @@ fn main() {
         }
         bytes.push(byte);
     }
+    println!("{} frames, {} banks", bytes.len(), bytes.len() / 256);
 
     let mut data = [0 as u8; 256];
-    while match port.read(&mut data) {
-        Ok(size) => {
-            let chunk = data[0] as usize;
-            port.write(&bytes[chunk * 256..((chunk+1) * 256)]);
-            println!("w {}", data[0]);
 
-            thread::sleep(time::Duration::from_millis(1));
+    let port = SerialPort::open("/dev/ttyACM0", 115200).expect("no connection");
+    while match port.read(&mut data) {
+        Ok(_size) => {
+            let chunk = data[0] as usize;
+            let write = port.write(&bytes[chunk * 256..((chunk+1) * 256)]);
+            if let Err(err) = write {
+                println!("{:#?}", err);
+            } else {
+                println!("w {}", data[0]);
+            }
             true
         },
             Err(e) => {
-                println!("{}", e);
-                thread::sleep(time::Duration::from_millis(1));
+                println!("--{}--", e);
                 true
             }
     } {}
+
+
 }
