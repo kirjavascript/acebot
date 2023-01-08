@@ -31,7 +31,7 @@ static const byte movie2[] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,32,0,32,0,32,0,32,0,32,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,32,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,18,0,16,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,34,0,34,0,34,0,32
   };
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
         Serial.println(F("SSD1306 allocation failed"));
@@ -82,6 +82,7 @@ void latch_pulse() {
     }
     
     if (frames%2==0) frameCount++;
+    
     //if (frameCount >= 241) detachInterrupt(digitalPinToInterrupt(LATCH));
     frames++;
     digitalWrite(A,buttons & 1);
@@ -106,6 +107,8 @@ void loop() {
     // TODO: stream movie over serial
     display.fillRect(0, 50, 160, 20, 0);
     display.setCursor(0, 50);
-    display.println(frames);
+    char c = Serial.read();
+    if (c) 
+    display.println(c);
     display.display();
 }
