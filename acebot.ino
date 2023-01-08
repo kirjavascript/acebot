@@ -22,21 +22,20 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 volatile unsigned long frames = 0;
 volatile unsigned long frameCount = 0;
+uint8_t next_bank = 0;
 
-static const byte movie[] = {
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,64,0,0,0,0,64,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,16,0,16,64,16,64,16,64,0,64,16,64,0,64,16,0,16,64,0,64,0,64,0,64,8,0,0,0,0,0,0,0,0,0,0,0,0,16,0,16,0,0,0,0,0,0,1,9,0,0,0,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,32,0,32,0
-};
-
-static const byte movie2[] = {
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,32,0,32,0,32,0,32,0,32,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,32,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,18,0,16,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,34,0,34,0,34,0,32
-  };
+byte stream0[256];
+byte stream1[256];
+  
 void setup() {
     Serial.begin(115200);
-
+    
+    
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
         Serial.println(F("SSD1306 allocation failed"));
         for(;;); // Don't proceed, loop forever
     }
+ 
     display.clearDisplay();
 
     display.setTextColor(WHITE);
@@ -46,7 +45,6 @@ void setup() {
     display.println("acebot");
     display.setTextSize(2);
     display.setCursor(50, 35);
-    // Display static text
     display.println("v0.1");
     display.display();
 
@@ -58,7 +56,7 @@ void setup() {
     pinMode(START, OUTPUT);
     pinMode(A, OUTPUT);
     pinMode(B, OUTPUT);
-    
+
     attachInterrupt(digitalPinToInterrupt(LATCH),latch_pulse, FALLING);
     digitalWrite(LEFT, 1);
     digitalWrite(RIGHT, 1);
@@ -69,45 +67,60 @@ void setup() {
     digitalWrite(A, 1);
     digitalWrite(B, 1);
 
+    while (!Serial); // wait for Serial connection
+    load_next_bank();
+    load_next_bank();
+}
+
+void load_next_bank() {
+  Serial.write(next_bank);
+  if (next_bank % 2 == 0) {
+    Serial.readBytes(stream0, 256);
+  } else {
+    Serial.readBytes(stream1, 256);
+  }
+  next_bank++;
 }
 
 void latch_pulse() {
-    //digitalWrite(DOWN, frames & 0b10);
     byte buttons;
-    if (frameCount < 241) {
-      buttons = ~movie[frameCount];
-      
+    
+    if (frameCount % 512 >= 256) {
+      buttons = ~stream1[frameCount % 256];
     } else {
-      buttons = ~movie2[frameCount-241];
+      buttons = ~stream0[frameCount % 256];
     }
+    
     if (frames%2==0) {
       frameCount++;
     }
-    
+
     //if (frameCount >= 241) detachInterrupt(digitalPinToInterrupt(LATCH));
     frames++;
-    digitalWrite(A,buttons & 1);
+    digitalWrite(A, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(B,      buttons & 1);
+    digitalWrite(B, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(SELECT,      buttons & 1);
+    digitalWrite(SELECT, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(START,      buttons & 1);
+    digitalWrite(START, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(RIGHT,      buttons & 1);
+    digitalWrite(RIGHT, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(LEFT,      buttons & 1);
+    digitalWrite(LEFT, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(DOWN,      buttons & 1);
+    digitalWrite(DOWN, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(UP,      buttons & 1);
+    digitalWrite(UP, buttons & 1);
 }
 
-
 void loop() {
-    // TODO: stream movie over serial
-    display.fillRect(0, 50, 160, 20, 0);
-    display.setCursor(0, 50);
-    display.println(frameCount);
-    display.display();
+    if (frameCount % 10 == 0) {
+      display.fillRect(0, 50, 160, 20, 0);
+      display.setCursor(0, 50);
+      display.println(frameCount);
+      display.setCursor(0, 30);
+      display.display();
+    }
+    
 }
