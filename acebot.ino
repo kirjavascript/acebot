@@ -80,8 +80,9 @@ void latch_pulse() {
     } else {
       buttons = ~movie2[frameCount-241];
     }
-    
-    if (frames%2==0) frameCount++;
+    if (frames%2==0) {
+      frameCount++;
+    }
     
     //if (frameCount >= 241) detachInterrupt(digitalPinToInterrupt(LATCH));
     frames++;
@@ -107,8 +108,6 @@ void loop() {
     // TODO: stream movie over serial
     display.fillRect(0, 50, 160, 20, 0);
     display.setCursor(0, 50);
-    char c = Serial.read();
-    if (c) 
-    display.println(c);
+    display.println(frameCount);
     display.display();
 }
