@@ -9,21 +9,21 @@
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 
 #define RIGHT 11
-#define LEFT 1
+#define LEFT 10
 #define DOWN 8
 #define UP 9
 #define A 4
 #define START 5
 #define SELECT 6
-#define B 7
+#define B 12
 
-#define LATCH 0
+#define LATCH 7
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 volatile unsigned long frames = 0;
 volatile unsigned long frameCount = 0;
-uint8_t next_bank = 0;
+volatile uint8_t next_bank = 0;
 
 byte stream0[256];
 byte stream1[256];
