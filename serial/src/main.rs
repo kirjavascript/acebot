@@ -18,27 +18,37 @@ fn main() {
         }
         bytes.push(byte);
     }
-    println!("{} frames, {} banks", bytes.len(), bytes.len() / 256);
+
+    let len = bytes.len();
+    println!("{} frames, {} banks", len, len / 256);
 
     let mut data = [0 as u8; 256];
 
-    let port = SerialPort::open("/dev/ttyACM0", 115200).expect("no connection");
-    while match port.read(&mut data) {
+    loop {
+        let port = SerialPort::open("/dev/ttyACM0", 115200).expect("no connection");
+        match port.read(&mut data) {
         Ok(_size) => {
             let chunk = data[0] as usize;
-            let write = port.write(&bytes[chunk * 256..((chunk+1) * 256)]);
-            if let Err(err) = write {
-                println!("{:#?}", err);
+            let start = chunk * 256;
+            let end = (chunk+1) * 256;
+            if end > len {
+                let write = port.write(&bytes[start..len]);
+                let write2 = port.write(&bytes[0..end - len]);
+                println!("{:#?} {:#?}", write, write2);
+                return;
             } else {
-                println!("w {}", data[0]);
+                let write = port.write(&bytes[start..end]);
+                if let Err(err) = write {
+                    println!("{:#?}", err);
+                } else {
+                    println!("bank {}", data[0]);
+                }
             }
-            true
         },
             Err(e) => {
                 println!("--{}--", e);
-                true
             }
-    } {}
-
+        }
+    }
 
 }
