@@ -23,13 +23,12 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 volatile unsigned long frames = 0;
 volatile unsigned long frameCount = 0;
-volatile uint8_t next_bank = 0;
 
 byte stream0[256];
 byte stream1[256];
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
 
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
         Serial.println(F("SSD1306 allocation failed"));
@@ -68,17 +67,19 @@ void setup() {
     digitalWrite(B, 1);
 
     while (!Serial); // wait for Serial connection (arduino leonardo)
-    load_next_bank();
+    uint8_t first = 0;
+    Serial.write(first);
+    Serial.readBytes(stream0, 256);
 }
 
-void load_next_bank() {
-    Serial.write(next_bank);
-    if (next_bank % 2 == 0) {
+void load_next_chunk() {
+    uint8_t next_chunk = (frameCount / 256) + 1;
+    Serial.write(next_chunk);
+    if (next_chunk % 2 == 0) {
         Serial.readBytes(stream0, 256);
     } else {
         Serial.readBytes(stream1, 256);
     }
-    next_bank++;
 }
 
 void latch_pulse() {
@@ -118,14 +119,11 @@ void loop() {
     if (frameCount % 6 == 0) {
         display.fillRect(0, 50, 160, 20, 0);
         display.setCursor(0, 50);
-        display.println(next_bank);
-        display.setCursor(0, 30);
-        display.fillRect(0, 30, 160, 20, 0);
-        display.println((frameCount / 256));
+        display.println(frameCount);
+        display.setCursor(0, 33);
+        display.fillRect(0, 33, 160, 16, 0);
+        display.println(frameCount / 256);
         display.display();
     }
-
-    if ((frameCount / 256) + 1 >= next_bank) {
-        load_next_bank();
-    }
+    load_next_chunk();
 }
