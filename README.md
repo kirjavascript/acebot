@@ -29,7 +29,7 @@ read or change the code in [acebot.ino](./acebot.ino) for pin mapping
 
 ### playback
 
-get an `Input Log.txt` from a BizHawk `tasproj` file that you want to play, or use the example
+get an `Input Log.txt` from a BizHawk `tasproj` file that you want to play, and rename to `input.data` or use the example
 
 install the adafruit gfx drivers in arduino IDE 
 

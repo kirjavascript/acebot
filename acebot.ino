@@ -98,6 +98,7 @@ void latch_pulse() {
     if (false) detachInterrupt(digitalPinToInterrupt(LATCH));
 
     frames++;
+    
     digitalWrite(A, buttons & 1);
     buttons = buttons >> 1;
     digitalWrite(B, buttons & 1);
@@ -106,13 +107,23 @@ void latch_pulse() {
     buttons = buttons >> 1;
     digitalWrite(START, buttons & 1);
     buttons = buttons >> 1;
-    digitalWrite(RIGHT, buttons & 1);
-    buttons = buttons >> 1;
-    digitalWrite(LEFT, buttons & 1);
-    buttons = buttons >> 1;
-    digitalWrite(DOWN, buttons & 1);
-    buttons = buttons >> 1;
-    digitalWrite(UP, buttons & 1);
+    if (true) { // bizhawk UDLRSsBA
+      digitalWrite(RIGHT, buttons & 1);
+      buttons = buttons >> 1;
+      digitalWrite(LEFT, buttons & 1);
+      buttons = buttons >> 1;
+      digitalWrite(DOWN, buttons & 1);
+      buttons = buttons >> 1;
+      digitalWrite(UP, buttons & 1);
+    } else { // fceux RLDUTSBA
+      digitalWrite(UP, buttons & 1);
+      buttons = buttons >> 1;
+      digitalWrite(DOWN, buttons & 1);
+      buttons = buttons >> 1;
+      digitalWrite(LEFT, buttons & 1);
+      buttons = buttons >> 1;
+      digitalWrite(RIGHT, buttons & 1);
+    }
 }
 
 void loop() {
