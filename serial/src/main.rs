@@ -1,9 +1,17 @@
 use serial2::SerialPort;
 use std::{thread, time};
 use std::io::{Read, Write};
+use std::fs::File;
+use std::env;
 
 fn main() {
-    let movie = include_str!("../../inputs.data");
+    let args: Vec<String> = env::args().collect();
+    let mut file = File::open(&args.get(1).expect("cargo run -- ./inputs.txt"))
+        .expect("error opening file");
+
+    let mut movie = String::new();
+    file.read_to_string(&mut movie).expect("error reading file");
+
     let lines = movie.split('\n').collect::<Vec<&str>>();
     let mut bytes = Vec::new();
     for line in &lines[2..lines.len()-2] {

@@ -107,7 +107,7 @@ void latch_pulse() {
     buttons = buttons >> 1;
     digitalWrite(START, buttons & 1);
     buttons = buttons >> 1;
-    if (true) { // bizhawk UDLRSsBA
+    if (false) { // bizhawk UDLRSsBA
       digitalWrite(RIGHT, buttons & 1);
       buttons = buttons >> 1;
       digitalWrite(LEFT, buttons & 1);

@@ -29,11 +29,11 @@ read or change the code in [acebot.ino](./acebot.ino) for pin mapping
 
 ### playback
 
-get an `Input Log.txt` from a BizHawk `tasproj` file that you want to play, and rename to `input.data` or use the example
+get an `Input Log.txt` from a BizHawk `tasproj` file that you want to play, or use the example
 
 install the adafruit gfx drivers in arduino IDE 
 
-after flashing, run the serial program with `cargo run` to stream the movie over USB
+after flashing, run the serial program with `cargo run -- ./inputs.txt` to stream the movie over USB
 
 turn on the console, watch the movie!
 
