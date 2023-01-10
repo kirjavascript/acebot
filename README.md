@@ -25,12 +25,17 @@ connect controller ground to arduino ground
 
 connect controller latch to an interrupt pin on the arduino
 
-read or change the code in `acebot.ino` for pin mapping
+read or change the code in [acebot.ino](./acebot.ino) for pin mapping
 
 ### playback
 
-install the adafruit gfx drivers in arduino IDE or remove the display code
+get an `Input Log.txt` from a BizHawk `tasproj` file that you want to play, or use the example
+
+install the adafruit gfx drivers in arduino IDE 
+
+after flashing, run the serial program with `cargo run` to stream the movie over USB
+
+turn on the console, watch the movie!
 
 
-create a TAS in BizHawk and save a `tasproj` file
-BizHawk's `Input Log.txt` from TAStudio
+![](./tasdemo.gif)
