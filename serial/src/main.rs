@@ -24,8 +24,9 @@ fn main() {
 
     let mut data = [0 as u8; 256];
 
+    let port = SerialPort::open("/dev/ttyACM0", 9600).expect("no connection");
+
     loop {
-        let port = SerialPort::open("/dev/ttyACM0", 115200).expect("no connection");
         match port.read(&mut data) {
         Ok(_size) => {
             let chunk = data[0] as usize;
