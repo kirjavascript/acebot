@@ -90,7 +90,7 @@ void latch_pulse() {
         buttons = ~stream0[frameCount % 256];
     }
 
-    if (frames%2==0) { // ???
+    if (frames%2==0) { // twice per frame polling
         frameCount++;
     }
 
