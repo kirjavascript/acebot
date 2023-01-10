@@ -42,7 +42,7 @@ fn main() {
                 if let Err(err) = write {
                     println!("{:#?}", err);
                 } else {
-                    println!("bank {}", data[0]);
+                    println!("chunk {}", data[0]);
                 }
             }
         },
