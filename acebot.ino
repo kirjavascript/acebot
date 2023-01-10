@@ -116,14 +116,12 @@ void latch_pulse() {
 }
 
 void loop() {
-    if (frameCount % 6 == 0) {
-        display.fillRect(0, 50, 160, 20, 0);
-        display.setCursor(0, 50);
-        display.println(frameCount);
-        display.setCursor(0, 33);
-        display.fillRect(0, 33, 160, 16, 0);
-        display.println(frameCount / 256);
-        display.display();
-    }
+    display.fillRect(0, 50, 160, 20, 0);
+    display.setCursor(0, 50);
+    display.println(frameCount);
+    display.setCursor(0, 33);
+    display.fillRect(0, 33, 160, 16, 0);
+    display.println(frameCount / 256);
+    display.display();
     load_next_chunk();
 }
