@@ -3,8 +3,7 @@ use std::{thread, time};
 use std::io::{Read, Write};
 
 fn main() {
-
-    let movie = include_str!("../../Input Log.txt");
+    let movie = include_str!("../../inputs.data");
     let lines = movie.split('\n').collect::<Vec<&str>>();
     let mut bytes = Vec::new();
     for line in &lines[2..lines.len()-2] {
