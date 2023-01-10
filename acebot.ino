@@ -27,15 +27,15 @@ volatile uint8_t next_bank = 0;
 
 byte stream0[256];
 byte stream1[256];
-  
+
 void setup() {
     Serial.begin(115200);
-    
+
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
         Serial.println(F("SSD1306 allocation failed"));
         for(;;);
     }
- 
+
     display.clearDisplay();
 
     display.setTextColor(WHITE);
@@ -72,29 +72,30 @@ void setup() {
 }
 
 void load_next_bank() {
-  Serial.write(next_bank);
-  if (next_bank % 2 == 0) {
-    Serial.readBytes(stream0, 256);
-  } else {
-    Serial.readBytes(stream1, 256);
-  }
-  next_bank++;
+    Serial.write(next_bank);
+    if (next_bank % 2 == 0) {
+        Serial.readBytes(stream0, 256);
+    } else {
+        Serial.readBytes(stream1, 256);
+    }
+    next_bank++;
 }
 
 void latch_pulse() {
     byte buttons;
-    
+
     if (frameCount % 512 >= 256) {
-      buttons = ~stream1[frameCount % 256];
+        buttons = ~stream1[frameCount % 256];
     } else {
-      buttons = ~stream0[frameCount % 256];
-    }
-    
-    if (frames%2==0) {
-      frameCount++;
+        buttons = ~stream0[frameCount % 256];
     }
 
-    //if (frameCount >= 241) detachInterrupt(digitalPinToInterrupt(LATCH));
+    if (frames%2==0) { // ???
+        frameCount++;
+    }
+
+    if (false) detachInterrupt(digitalPinToInterrupt(LATCH));
+
     frames++;
     digitalWrite(A, buttons & 1);
     buttons = buttons >> 1;
@@ -115,16 +116,16 @@ void latch_pulse() {
 
 void loop() {
     if (frameCount % 6 == 0) {
-      display.fillRect(0, 50, 160, 20, 0);
-      display.setCursor(0, 50);
-      display.println(next_bank);
-      display.setCursor(0, 30);
-      display.fillRect(0, 30, 160, 20, 0);
-      display.println((frameCount / 256));
-      display.display();
+        display.fillRect(0, 50, 160, 20, 0);
+        display.setCursor(0, 50);
+        display.println(next_bank);
+        display.setCursor(0, 30);
+        display.fillRect(0, 30, 160, 20, 0);
+        display.println((frameCount / 256));
+        display.display();
     }
 
     if ((frameCount / 256) + 1 >= next_bank) {
-      load_next_bank();
+        load_next_bank();
     }
 }
