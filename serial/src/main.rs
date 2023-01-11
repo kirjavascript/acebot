@@ -1,6 +1,5 @@
 use serial2::SerialPort;
-use std::{thread, time};
-use std::io::{Read, Write};
+use std::io::Read;
 use std::fs::File;
 use std::env;
 
@@ -42,7 +41,7 @@ fn main() {
             let end = (chunk+1) * 256;
             if end > len {
                 let write = port.write(&bytes[start..len]);
-                let write2 = port.write(&bytes[0..end - len]);
+                let write2 = port.write(&vec![0; end - len]);
                 println!("{:#?} {:#?}", write, write2);
                 return;
             } else {
