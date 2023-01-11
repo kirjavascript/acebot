@@ -4,6 +4,8 @@ minimalist arduino powered tasbot-like replay device for NES
 
 ![](./acebot.png)
 
+supports BizHawk and FCEUX replays, handles lag frames automatically
+
 ### parts needed
 
 * nes controller

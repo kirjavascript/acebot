@@ -96,13 +96,17 @@ void latch_pulse() {
     }
 
     if (frames%2==0) { // twice per frame polling
-          unsigned long now = micros(); 
-          diff = now - lastFrame;
-          if (lastFrame && diff > 20000) { // handle lag frames
-            frameCount++;
-            lagFrames++;
+        // handle lag frames
+        unsigned long now = micros(); 
+        diff = now - lastFrame;
+        if (lastFrame) {
+          unsigned long lagCount = round(diff / 16000) - 1;
+          if (lagCount) {
+            frameCount += lagCount;
+            lagFrames += lagCount;
           }
-          lastFrame = now;
+        }
+        lastFrame = now;
         frameCount++;
     }
 
