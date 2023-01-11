@@ -25,6 +25,8 @@ volatile unsigned long frames = 0;
 volatile unsigned long frameCount = 0;
 volatile unsigned long lastFrame = 0;
 volatile unsigned long diff = 0;
+volatile unsigned long lagFrames = 0;
+
 
 byte stream0[256];
 byte stream1[256];
@@ -98,6 +100,7 @@ void latch_pulse() {
           diff = now - lastFrame;
           if (lastFrame && diff > 20000) { // handle lag frames
             frameCount++;
+            lagFrames++;
           }
           lastFrame = now;
         frameCount++;
@@ -137,9 +140,11 @@ void latch_pulse() {
 void loop() {
     display.fillRect(0, 50, 160, 20, 0);
     display.setCursor(0, 50);
-    display.println(diff);
+    display.println(frameCount);
     display.setCursor(0, 33);
     display.fillRect(0, 33, 160, 16, 0);
+    display.println(lagFrames);
+    display.setCursor(60, 33);
     display.println(frameCount / 256);
     display.display();
     load_next_chunk();
