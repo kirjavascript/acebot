@@ -37,6 +37,7 @@ fn main() {
         match port.read(&mut data) {
         Ok(_size) => {
             let chunk = data[0] as usize;
+            print!("chunk req {} -- ", chunk);
             let start = chunk * 256;
             let end = (chunk+1) * 256;
             if end > len {
@@ -49,7 +50,7 @@ fn main() {
                 if let Err(err) = write {
                     println!("{:#?}", err);
                 } else {
-                    println!("chunk {}", data[0]);
+                    println!("chunk res {}", data[0]);
                 }
             }
         },

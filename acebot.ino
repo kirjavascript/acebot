@@ -23,6 +23,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 volatile unsigned long frames = 0;
 volatile unsigned long frameCount = 0;
+volatile unsigned long lastFrame = 0;
+volatile unsigned long diff = 0;
 
 byte stream0[256];
 byte stream1[256];
@@ -92,6 +94,12 @@ void latch_pulse() {
     }
 
     if (frames%2==0) { // twice per frame polling
+          unsigned long now = micros(); 
+          diff = now - lastFrame;
+          if (lastFrame && diff > 20000) { // handle lag frames
+            frameCount++;
+          }
+          lastFrame = now;
         frameCount++;
     }
 
@@ -107,7 +115,7 @@ void latch_pulse() {
     buttons = buttons >> 1;
     digitalWrite(START, buttons & 1);
     buttons = buttons >> 1;
-    if (false) { // bizhawk UDLRSsBA
+    if (true) { // bizhawk UDLRSsBA
       digitalWrite(RIGHT, buttons & 1);
       buttons = buttons >> 1;
       digitalWrite(LEFT, buttons & 1);
@@ -129,7 +137,7 @@ void latch_pulse() {
 void loop() {
     display.fillRect(0, 50, 160, 20, 0);
     display.setCursor(0, 50);
-    display.println(frameCount);
+    display.println(diff);
     display.setCursor(0, 33);
     display.fillRect(0, 33, 160, 16, 0);
     display.println(frameCount / 256);
