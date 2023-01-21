@@ -8,6 +8,9 @@
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 
+#define POLLING_QTY 2
+
+// pins
 #define RIGHT 11
 #define LEFT 10
 #define DOWN 8
@@ -16,7 +19,6 @@
 #define START 5
 #define SELECT 6
 #define B 12
-
 #define LATCH 7
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
@@ -95,9 +97,9 @@ void latch_pulse() {
         buttons = ~stream0[frameCount % 256];
     }
 
-    if (frames%2==0) { // twice per frame polling
+    if (frames%POLLING_QTY==0) {
         // handle lag frames
-        unsigned long now = micros(); 
+        unsigned long now = micros();
         diff = now - lastFrame;
         if (lastFrame) {
           unsigned long lagCount = round(diff / 16000) - 1;
@@ -113,7 +115,7 @@ void latch_pulse() {
     if (false) detachInterrupt(digitalPinToInterrupt(LATCH));
 
     frames++;
-    
+
     digitalWrite(A, buttons & 1);
     buttons = buttons >> 1;
     digitalWrite(B, buttons & 1);
