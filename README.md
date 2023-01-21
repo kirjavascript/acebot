@@ -33,6 +33,8 @@ read or change the code in [acebot.ino](./acebot.ino) for pin mapping
 
 get an `Input Log.txt` from a BizHawk `tasproj` file that you want to play, or use an `.fm2` from fceux
 
+you may need to remove frames from the start to account for extra lag frames
+
 install the adafruit gfx drivers in arduino IDE 
 
 after flashing, run the serial program with `cargo run -- ./inputs.txt` to stream the movie over USB
